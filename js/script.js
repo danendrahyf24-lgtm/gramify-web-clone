@@ -1063,14 +1063,14 @@ function initMoreMenuPopover() {
   const logoutBtn = document.getElementById('more-menu-logout-btn');
 
   
-  const savedTheme = localStorage.getItem(THEME_MODE_KEY) || 'light';
+  const savedTheme = localStorage.getItem(THEME_MODE_KEY) || 'dark';
   applyThemeMode(savedTheme);
 
   
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
   if (mediaQuery && mediaQuery.addEventListener) {
     mediaQuery.addEventListener('change', () => {
-      const currentMode = localStorage.getItem(THEME_MODE_KEY) || 'light';
+      const currentMode = localStorage.getItem(THEME_MODE_KEY) || 'dark';
       if (currentMode === 'auto') {
         applyThemeMode('auto');
       }
@@ -1104,7 +1104,7 @@ function initMoreMenuPopover() {
   themeBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const mode = btn.getAttribute('data-theme-mode') || 'light';
+      const mode = btn.getAttribute('data-theme-mode') || 'dark';
       localStorage.setItem(THEME_MODE_KEY, mode);
       applyThemeMode(mode);
     });
@@ -1124,7 +1124,7 @@ function initMoreMenuPopover() {
 function openAppearanceModal() {
   const appearanceModal = document.getElementById('appearance-modal');
   if (!appearanceModal) return;
-  const currentMode = localStorage.getItem(THEME_MODE_KEY) || 'light';
+  const currentMode = localStorage.getItem(THEME_MODE_KEY) || 'dark';
   applyThemeMode(currentMode);
   const wasHidden = appearanceModal.classList.contains('hidden');
   appearanceModal.classList.remove('hidden');
@@ -1183,7 +1183,7 @@ function initAppearanceModal() {
     modalThemeBtns.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const mode = btn.getAttribute('data-theme-mode') || 'light';
+        const mode = btn.getAttribute('data-theme-mode') || 'dark';
         localStorage.setItem(THEME_MODE_KEY, mode);
         applyThemeMode(mode);
       });
