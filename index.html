@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gramify</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Grand+Hotel&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div id="auth-gate" class="auth-gate">
+    
+    <div id="auth-step-1" class="auth-card">
+      <span class="auth-logo">Gramify</span>
+      <p class="auth-subtitle">
+        Masuk dengan Akun Google untuk berbagi foto, membuat Story 24 jam, dan mengirim pesan ke teman.
+      </p>
+
+      <button id="btn-google-signin" type="button" class="google-login-btn" disabled>
+        <svg width="20" height="20" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        <span>Masuk dengan Akun Google</span>
+      </button>
+
+      <p id="google-auth-status" style="font-size:12px; color:#737373; margin-top:14px; line-height:1.5;"></p>
+    </div>
+
+    <div id="auth-step-3" class="auth-card hidden">
+      <span class="auth-logo">Gramify</span>
+      <p id="selected-google-info" style="font-size:13px; color:#444746; margin-bottom:20px; background:#f5f8fd; padding:8px 12px; border-radius:999px; display:inline-block;"></p>
+
+      <form id="setup-username-form" style="text-align:left;">
+        <div class="form-field">
+          <label for="setup-username-input">Buat Username</label>
+          <input id="setup-username-input" type="text" class="form-input" required placeholder="Contoh: h4ifa_24" />
+        </div>
+        <div class="form-field">
+          <label for="setup-fullname-input">Nama Tampilan</label>
+          <input id="setup-fullname-input" type="text" class="form-input" required placeholder="Contoh: danendra hayfa" />
+        </div>
+        <button type="submit" class="btn-primary" style="margin-top:6px;">Lanjutkan ke Beranda</button>
+      </form>
+    </div>
+
+  </div>
+
+  <header class="mobile-header">
+    <div class="mobile-header-left">
+      <button type="button" class="open-create-btn" aria-label="Create">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24">
+          <line x1="12" y1="4" x2="12" y2="20" />
+          <line x1="4" y1="12" x2="20" y2="12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="mobile-header-brand" data-nav-target="home" style="cursor:pointer;" title="Gramify">
+      <span class="brand-wordmark">Gramify</span>
+      <svg class="header-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+
+    <div class="mobile-header-right">
+      <button type="button" class="open-notifications-btn" aria-label="Notifications" style="position:relative;">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.5c-1.8 0-3.4.9-4.5 2.3-1.1-1.4-2.7-2.3-4.5-2.3C4.4 3.5 2 6 2 9.2c0 4.6 4.8 8.4 10 12.3 5.2-3.9 10-7.7 10-12.3 0-3.2-2.4-5.7-5.5-5.7Z" />
+        </svg>
+        <span id="mobile-notif-dot" class="notif-dot-badge hidden"></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+
+    <aside class="sidebar" aria-label="Main Navigation">
+      
+      <div class="sidebar-top">
+        <button type="button" class="nav-row" data-nav-target="home" aria-label="Gramify Home">
+          <div class="nav-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+              <circle cx="12" cy="12" r="4.2" />
+              <circle cx="17.2" cy="6.8" r="1.3" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
+        </button>
+      </div>
+
+      <nav class="sidebar-middle" aria-label="Primary Menu">
+        
+        <button type="button" class="nav-row active" data-nav-target="home">
+          <div class="nav-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21.4 10.6 13.1 2.8a1.6 1.6 0 0 0-2.2 0l-8.3 7.8a1.5 1.5 0 0 0-.5 1.1V20a2.5 2.5 0 0 0 2.5 2.5h4.2a1 1 0 0 0 1-1v-5.2a2.2 2.2 0 0 1 4.4 0v5.2a1 1 0 0 0 1 1h4.2A2.5 2.5 0 0 0 21.9 20v-8.3c0-.4-.2-.8-.5-1.1Z" />
+            </svg>
+          </div>
+          <span class="nav-label">Home</span>
+        </button>
+
+        <button type="button" class="nav-row" data-nav-target="posts-only">
+          <div class="nav-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="4" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <line x1="9" y1="21" x2="9" y2="9" />
+            </svg>
+          </div>
+          <span class="nav-label">Post</span>
+        </button>
+
+        <button type="button" class="nav-row open-messages-btn" data-nav-target="messages" aria-label="Messages">
+          <div class="nav-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+              <path d="M21.5 3.5 2.8 10.2c-.7.3-.7 1.3 0 1.6l7.4 3.1 3.1 7.4c.3.7 1.3.7 1.6 0L21.5 3.5Z" />
+              <path d="M10.2 14.9 15.5 9.5" />
+            </svg>
+            <span id="sidebar-msg-badge" class="dm-pill-badge hidden">0</span>
+          </div>
+          <span class="nav-label">Messages</span>
+        </button>
+
+        <button type="button" class="nav-row open-search-btn">
+          <div class="nav-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="10.5" cy="10.5" r="7" />
+              <line x1="15.8" y1="15.8" x2="21" y2="21" />
+            </svg>
+          </div>
+          <span class="nav-label">Search</span>
+        </button>
+
+        <button type="button" class="nav-row open-notifications-btn" id="notif-nav-row">
+          <div class="nav-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16.5 3.5c-1.8 0-3.4.9-4.5 2.3-1.1-1.4-2.7-2.3-4.5-2.3C4.4 3.5 2 6 2 9.2c0 4.6 4.8 8.4 10 12.3 5.2-3.9 10-7.7 10-12.3 0-3.2-2.4-5.7-5.5-5.7Z" />
+            </svg>
+            <span id="notif-red-dot" class="heart-red-dot hidden"></span>
+          </div>
+          <span class="nav-label">Notifications</span>
+
+          <span id="notif-floating-bubble" class="notif-floating-bubble hidden">
+            <svg style="width:13px; height:13px;" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <span id="notif-bubble-count">1</span>
+          </span>
+        </button>
+
+        <button type="button" class="nav-row" data-nav-target="saved">
+          <div class="nav-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+          </div>
+          <span class="nav-label">Saved</span>
+        </button>
+
+        <button type="button" class="nav-row open-create-btn">
+          <div class="nav-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </div>
+          <span class="nav-label">Create</span>
+        </button>
+
+        <button type="button" class="nav-row" data-nav-target="profile">
+          <div class="nav-icon-wrap">
+            <img id="sidebar-profile-avatar" src="" alt="Profile" class="nav-avatar" />
+          </div>
+          <span class="nav-label">Profile</span>
+        </button>
+
+        <button id="sidebar-more-btn" type="button" class="nav-row" style="margin-top:8px;">
+          <div class="nav-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="4" y1="6.5" x2="20" y2="6.5" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17.5" x2="20" y2="17.5" />
+            </svg>
+          </div>
+          <span class="nav-label">More</span>
+        </button>
+
+      </nav>
+    </aside>
+
+    <div id="more-menu-popover" class="more-menu-popover" role="menu" aria-label="More Options">
+      <div class="more-section-label">Appearance</div>
+
+      <button type="button" class="more-popover-item theme-option-btn" data-theme-mode="dark">
+        <div class="more-popover-left">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <span>Dark</span>
+        </div>
+        <svg class="more-check-icon" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </button>
+
+      <button type="button" class="more-popover-item theme-option-btn selected" data-theme-mode="light">
+        <div class="more-popover-left">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+          <span>Light</span>
+        </div>
+        <svg class="more-check-icon" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </button>
+
+      <button type="button" class="more-popover-item theme-option-btn" data-theme-mode="auto">
+        <div class="more-popover-left">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          <span>Auto</span>
+        </div>
+        <svg class="more-check-icon" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </button>
+
+      <div class="more-divider"></div>
+
+      <button type="button" id="more-menu-logout-btn" class="more-popover-item logout-item">
+        <div class="more-popover-left">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+          </svg>
+          <div class="logout-text-wrap">
+            <span>Log out</span>
+            <span id="more-logout-username">(@h4ifa_24)</span>
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <div class="main-wrapper">
+      <div class="content-container">
+
+        <main id="feed-view-container" class="feed-column">
+
+          <section id="stories-section" class="stories-bar" aria-label="Stories 24 Jam"></section>
+
+          <div id="feed-mode-banner" class="hidden" style="width:100%; max-width:468px; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between;">
+            <strong id="feed-mode-title" style="font-size:16px;">Saved Posts</strong>
+            <button type="button" data-nav-target="home" style="color:var(--accent-blue); font-weight:600; font-size:13px;">Kembali ke Home</button>
+          </div>
+
+          <section id="posts-list" class="posts-list" aria-label="Feed Posts"></section>
+
+        </main>
+
+        <main id="profile-view-container" class="profile-view hidden">
+          
+          <div class="profile-top-section">
+            <div class="profile-avatar-container">
+              <div id="profile-note-btn" class="profile-note-bubble" title="Klik untuk mengubah Note">
+                Note...
+              </div>
+              <img id="profile-page-avatar" src="" alt="Avatar" class="profile-avatar-lg" title="Klik untuk mengganti foto profil" style="cursor:pointer;" />
+              <span id="profile-page-online-dot" class="profile-online-badge hidden" title="Sedang aktif"></span>
+              <input id="quick-avatar-upload-input" type="file" accept="image/*" class="hidden" />
+            </div>
+
+            <div class="profile-info-col">
+              <div class="profile-username-row">
+                <h1 id="profile-page-username" class="profile-username-title">h4ifa_24</h1>
+                <button type="button" id="open-edit-profile-gear" title="Appearance" aria-label="Appearance">
+                  <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                </button>
+              </div>
+
+              <p id="profile-page-fullname" class="profile-fullname">danendra hayfa</p>
+
+              <div class="profile-stats-row">
+                <span><strong id="profile-stat-posts">0</strong> posts</span>
+                <span><strong id="profile-stat-followers">0</strong> followers</span>
+                <span><strong id="profile-stat-following">0</strong> following</span>
+              </div>
+
+              <div class="profile-bio-box">
+                <p id="profile-page-bio"></p>
+                <a id="profile-page-website" href="#" target="_blank" rel="noopener noreferrer" class="profile-bio-link"></a>
+                <div style="margin-top:4px; font-weight:600; font-size:13px;">
+                  @<span id="profile-page-handle-tag">h4ifa_24</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-buttons-bar">
+            <button type="button" id="edit-profile-btn" class="profile-gray-btn">Edit profile</button>
+            <button type="button" id="switch-google-account-btn" class="profile-gray-btn">Ganti Akun Google / Log out</button>
+            <button type="button" id="other-profile-follow-btn" class="profile-gray-btn hidden" style="background:var(--accent-blue); color:#ffffff; display: none !important;">Follow</button>
+            <button type="button" id="other-profile-message-btn" class="profile-gray-btn hidden" style="display: none !important;">Message</button>
+          </div>
+
+          <div class="profile-tabs-bar">
+            <button type="button" id="profile-tab-posts" class="profile-tab-btn active" title="Posts">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" />
+                <line x1="3" y1="9" x2="21" y2="9" />
+                <line x1="3" y1="15" x2="21" y2="15" />
+                <line x1="9" y1="3" x2="9" y2="21" />
+                <line x1="15" y1="3" x2="15" y2="21" />
+              </svg>
+              <span>Posts</span>
+            </button>
+            <button type="button" id="profile-tab-saved" class="profile-tab-btn" title="Saved">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              <span>Saved</span>
+            </button>
+            <button type="button" id="profile-tab-reposts" class="profile-tab-btn" title="Posting Ulang">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M19.5 9.5v-1a3 3 0 0 0-3-3H5.5" />
+                <polyline points="8.5 2.5 5.5 5.5 8.5 8.5" />
+                <path d="M4.5 14.5v1a3 3 0 0 0 3 3h11" />
+                <polyline points="15.5 21.5 18.5 18.5 15.5 15.5" />
+              </svg>
+              <span>Reposts</span>
+            </button>
+          </div>
+
+          <div id="profile-posts-grid" class="profile-posts-grid"></div>
+          <p id="profile-empty-posts" class="hidden" style="text-align:center; color:var(--text-muted); padding:48px 0;">
+            Belum ada postingan. Klik tombol <strong>+ Create</strong> di sidebar untuk mengunggah foto pertamamu!
+          </p>
+
+        </main>
+
+        <main id="messages-view-container" class="messages-view-container hidden" aria-label="Direct Messages">
+          
+          <section class="dm-inbox-column">
+            
+            <div class="dm-inbox-header">
+              <div class="dm-header-user-btn" title="Akun Anda">
+                <span id="dm-header-current-username">h4ifa_24</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              <button type="button" id="dm-compose-btn" class="dm-icon-action-btn" title="Tulis Pesan Baru" aria-label="New Message">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div class="dm-search-bar-wrap">
+              <div class="dm-search-pill">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="dm-search-input" placeholder="Search" autocomplete="off" />
+              </div>
+            </div>
+
+            <div class="dm-section-heading-row">
+              <span class="dm-section-title">Messages</span>
+              <span class="dm-section-requests">Requests</span>
+            </div>
+
+            <div id="dm-threads-list" class="dm-threads-list-scroll"></div>
+
+          </section>
+
+          <section class="dm-chat-column">
+            
+            <div id="dm-empty-state-panel" class="dm-empty-state-panel">
+              <div class="dm-empty-circle-wrap">
+                <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.5 3.5 2.8 10.2c-.7.3-.7 1.3 0 1.6l7.4 3.1 3.1 7.4c.3.7 1.3.7 1.6 0L21.5 3.5Z" />
+                  <path d="M10.2 14.9 15.5 9.5" />
+                </svg>
+              </div>
+              <h2 class="dm-empty-title">Your messages</h2>
+              <p class="dm-empty-subtitle">Send a message to start a chat.</p>
+              <button type="button" id="dm-empty-send-btn" class="dm-empty-blue-btn">Send message</button>
+            </div>
+
+            <div id="dm-active-chat-panel" class="dm-active-chat-panel hidden">
+              
+              <div class="dm-active-chat-header">
+                <div class="dm-chat-header-left">
+                  <button type="button" id="dm-mobile-back-btn" class="dm-mobile-back-btn" aria-label="Kembali ke Inbox" title="Kembali ke daftar pesan">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+                  <div class="dm-header-avatar-wrap">
+                    <img id="dm-header-partner-avatar" src="" alt="Avatar" class="dm-header-avatar" />
+                    <span id="dm-header-online-dot" class="msg-online-dot hidden"></span>
+                  </div>
+                  <div class="dm-header-partner-meta">
+                    <div id="dm-header-partner-name" class="dm-partner-title">Partner Name</div>
+                  </div>
+                </div>
+
+                <div class="dm-chat-header-actions">
+                  <button type="button" class="dm-icon-action-btn" title="Panggilan Suara" aria-label="Audio Call">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                  </button>
+                  <button type="button" class="dm-icon-action-btn" title="Panggilan Video" aria-label="Video Call">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                    </svg>
+                  </button>
+                  <button type="button" id="dm-header-info-btn" class="dm-icon-action-btn" title="Lihat Profil Pengguna" aria-label="Info">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div id="dm-chat-messages-container" class="dm-chat-messages-container"></div>
+
+              <form id="dm-chat-send-form" class="dm-chat-input-bar">
+                <div class="dm-input-pill-wrap">
+                  <button type="button" id="dm-emoji-btn" class="dm-pill-icon-btn" title="Emoji" aria-label="Emoji">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                      <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                      <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                    </svg>
+                  </button>
+
+                  <input type="text" id="dm-chat-text-input" class="dm-chat-text-input" placeholder="Message..." autocomplete="off" />
+
+                  <button type="button" class="dm-pill-icon-btn" title="Pesan Suara" aria-label="Voice Message">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                      <line x1="12" y1="19" x2="12" y2="22"></line>
+                    </svg>
+                  </button>
+
+                  <button type="button" id="dm-image-upload-btn" class="dm-pill-icon-btn" title="Kirim Foto" aria-label="Upload Photo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                      <path d="m21 15-5-5L5 21"></path>
+                    </svg>
+                  </button>
+                  <input type="file" id="dm-image-file-input" accept="image/*" class="hidden" />
+
+                  <button type="button" id="dm-send-heart-btn" class="dm-pill-icon-btn dm-heart-accent" title="Kirim Suka" aria-label="Send Heart">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                  </button>
+
+                  <button type="submit" id="dm-submit-btn" class="dm-submit-text-btn hidden">Send</button>
+                </div>
+              </form>
+
+            </div>
+
+          </section>
+
+        </main>
+
+        <aside id="right-panel" class="right-panel" aria-label="Sidebar Kanan">
+          
+          <div class="profile-switch-row">
+            <div class="user-mini-info" style="cursor:pointer;" data-nav-target="profile">
+              <img id="right-panel-avatar" src="" alt="" class="avatar-md" />
+              <div class="user-text">
+                <span id="right-panel-username" class="user-handle">h4ifa_24</span>
+                <span id="right-panel-fullname" class="user-subtext">danendra hayfa</span>
+              </div>
+            </div>
+            <button type="button" id="right-switch-btn" class="follow-btn">Switch</button>
+          </div>
+
+          <div class="suggestions-header">
+            <span class="suggestions-title">Suggested for you</span>
+            <button type="button" class="see-all-btn open-search-btn">See All</button>
+          </div>
+
+          <div id="right-suggestions-list" class="suggestions-list"></div>
+
+          <footer class="right-footer">
+            <div class="footer-links">
+              <a href="#posts-list">About</a> ·
+              <a href="#posts-list">Help</a> ·
+              <a href="#posts-list">Press</a> ·
+              <a href="#posts-list">API</a> ·
+              <a href="#posts-list">Jobs</a> ·
+              <a href="#posts-list">Privacy</a> ·
+              <a href="#posts-list">Terms</a> ·
+              <a href="#posts-list">Locations</a> ·
+              <a href="#posts-list">Language</a>
+            </div>
+            <p>© 2026 GRAMIFY</p>
+          </footer>
+
+        </aside>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div id="floating-messages-pill" class="floating-messages-pill open-messages-btn" title="Buka Pesan">
+    <div class="floating-msg-left">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M21.5 3.5 2.8 10.2c-.7.3-.7 1.3 0 1.6l7.4 3.1 3.1 7.4c.3.7 1.3.7 1.6 0L21.5 3.5Z" />
+          <path d="M10.2 14.9 15.5 9.5" />
+        </svg>
+        <span id="floating-msg-badge" class="dm-pill-badge hidden">0</span>
+      </div>
+      <span>Messages</span>
+    </div>
+    <div class="floating-msg-avatars" id="floating-msg-avatars">
+      <span class="floating-msg-more-dots">•••</span>
+    </div>
+  </div>
+
+  <aside id="messages-popup-window" class="messages-popup-window hidden" aria-label="Messages Popup">
+    
+    <div class="msg-popup-header">
+      <div class="msg-popup-title-wrap">
+        <button type="button" id="chat-back-to-list-btn" class="hidden" style="margin-right:4px; font-size:18px;" title="Kembali ke daftar pesan">←</button>
+        <span id="msg-popup-header-title">Messages</span>
+        <span id="msg-popup-header-badge" class="msg-header-badge hidden">0</span>
+      </div>
+      <div class="msg-popup-actions">
+        <button type="button" id="msg-expand-btn" title="Perbesar / Perkecil" aria-label="Expand">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
+        </button>
+        <button type="button" id="msg-close-btn" title="Tutup" aria-label="Close" style="font-size:20px; line-height:1;">✕</button>
+      </div>
+    </div>
+
+    <div id="msg-threads-list-view" class="msg-list-body">
+      <div id="msg-threads-container"></div>
+      <button type="button" id="msg-compose-btn" class="msg-compose-fab" title="Mulai Chat Baru">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+      </button>
+    </div>
+
+    <div id="msg-active-chat-view" class="chat-room-view hidden">
+      <div id="chat-messages-area" class="chat-messages-area"></div>
+      <form id="chat-send-form" class="chat-input-bar">
+        <input id="chat-input-field" type="text" class="chat-input-field" placeholder="Message..." autocomplete="off" />
+        <button type="submit" style="color:var(--accent-blue); font-weight:700; font-size:14px; padding:0 6px;">Send</button>
+      </form>
+    </div>
+
+  </aside>
+
+  <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+    <button type="button" class="mobile-nav-btn active" data-nav-target="home" aria-label="Home">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21.4 10.6 13.1 2.8a1.6 1.6 0 0 0-2.2 0l-8.3 7.8a1.5 1.5 0 0 0-.5 1.1V20a2.5 2.5 0 0 0 2.5 2.5h4.2a1 1 0 0 0 1-1v-5.2a2.2 2.2 0 0 1 4.4 0v5.2a1 1 0 0 0 1 1h4.2A2.5 2.5 0 0 0 21.9 20v-8.3c0-.4-.2-.8-.5-1.1Z" />
+      </svg>
+    </button>
+    <button type="button" class="mobile-nav-btn" data-nav-target="posts-only" aria-label="Reels">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+        <path d="M16 2v6"></path>
+        <path d="M8 2v6"></path>
+        <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon>
+      </svg>
+    </button>
+    <button type="button" class="mobile-nav-btn open-messages-btn" data-nav-target="messages" aria-label="Messages" style="position:relative;">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M22 3 9.22 10.08" />
+        <path d="M11.7 20.33 22 3H2l7.22 7.08 2.48 10.25Z" />
+      </svg>
+      <span id="mobile-bottom-dm-badge" class="bottom-nav-badge hidden">0</span>
+    </button>
+    <button type="button" class="mobile-nav-btn open-search-btn" aria-label="Search">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
+        <circle cx="10.5" cy="10.5" r="7" />
+        <line x1="15.8" y1="15.8" x2="21" y2="21" />
+      </svg>
+    </button>
+    <button type="button" class="mobile-nav-btn" data-nav-target="profile" aria-label="Profile" style="position:relative;">
+      <div class="mobile-nav-avatar-wrap">
+        <img id="mobile-profile-avatar" src="" alt="Profile" class="nav-avatar" />
+      </div>
+      <span id="mobile-profile-dot" class="profile-nav-dot hidden"></span>
+    </button>
+  </nav>
+
+  <div id="create-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Create">
+    <div class="modal-box create-modal-box">
+      <div class="modal-header">
+        <span id="create-modal-title">Buat Postingan Baru</span>
+        <button id="create-modal-close" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="create-content-form">
+          
+          <div class="create-type-segmented-control" role="tablist">
+            <button type="button" class="create-type-tab-btn active" data-type="post" role="tab" aria-selected="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M3 9h18" />
+                <path d="M9 21V9" />
+              </svg>
+              <span>Postingan Feed</span>
+            </button>
+            <button type="button" class="create-type-tab-btn" data-type="story" role="tab" aria-selected="false">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span>Story 24 Jam</span>
+            </button>
+          </div>
+          <input type="radio" name="create-type" value="post" checked class="hidden" />
+          <input type="radio" name="create-type" value="story" class="hidden" />
+
+          <div id="create-upload-dropzone" class="create-dropzone-wrap">
+            <div class="create-media-icon-wrap">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="3" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="m21 15-5-5L5 21" />
+              </svg>
+              <div class="create-media-badge-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </div>
+            </div>
+
+            <h3 class="create-dropzone-title">Tarik foto atau video ke sini</h3>
+            <p class="create-dropzone-subtitle">Mendukung file gambar PNG, JPG, JPEG, GIF, atau WebP</p>
+
+            <input id="create-file-input" type="file" accept="image/*" class="hidden" />
+            <button type="button" id="create-select-file-btn" class="create-browse-btn">
+              Pilih dari Perangkat
+            </button>
+
+            <div class="create-divider-row">
+              <span>atau tempel tautan web</span>
+            </div>
+
+            <div class="create-url-input-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+              </svg>
+              <input id="create-url-input" type="url" placeholder="https://example.com/foto.jpg" />
+              <button type="button" id="create-url-apply-btn">Muat</button>
+            </div>
+          </div>
+
+          <div id="create-editor-details-section" class="create-editor-details-section hidden">
+            
+            <div class="photo-editor-preview-container">
+              <div class="photo-editor-preview-wrap">
+                <canvas id="editor-canvas" width="600" height="600"></canvas>
+              </div>
+              <button type="button" id="create-change-photo-btn" class="create-change-photo-btn" title="Ganti foto">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                  <path d="M21 3v5h-5" />
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                  <path d="M8 16H3v5" />
+                </svg>
+                <span>Ganti Foto</span>
+              </button>
+            </div>
+
+            <div class="create-section-block">
+              <div class="create-section-header">
+                <span class="create-section-label">Filter &amp; Gaya</span>
+              </div>
+              <div class="filter-pills-row">
+                <button type="button" class="filter-pill-btn active" data-preset="normal">Normal</button>
+                <button type="button" class="filter-pill-btn" data-preset="clarendon">Clarendon</button>
+                <button type="button" class="filter-pill-btn" data-preset="warm">Warm Sunset</button>
+                <button type="button" class="filter-pill-btn" data-preset="bw">Monochrome</button>
+                <button type="button" class="filter-pill-btn" data-preset="vintage">Vintage</button>
+              </div>
+            </div>
+
+            <div class="create-section-block">
+              <div class="create-section-header">
+                <span class="create-section-label">Penyesuaian Visual</span>
+              </div>
+              <div class="create-adjustments-grid">
+                <div class="slider-adjustment-item">
+                  <div class="slider-label-row">
+                    <span class="slider-name">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4" /><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                      </svg>
+                      Kecerahan
+                    </span>
+                    <span id="label-val-brightness" class="slider-val">100%</span>
+                  </div>
+                  <input id="edit-brightness" type="range" min="60" max="140" value="100" class="custom-range-slider" />
+                </div>
+
+                <div class="slider-adjustment-item">
+                  <div class="slider-label-row">
+                    <span class="slider-name">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" /><path d="M12 2a10 10 0 0 1 0 20Z" fill="currentColor"/>
+                      </svg>
+                      Kontras
+                    </span>
+                    <span id="label-val-contrast" class="slider-val">100%</span>
+                  </div>
+                  <input id="edit-contrast" type="range" min="60" max="150" value="100" class="custom-range-slider" />
+                </div>
+
+                <div class="slider-adjustment-item">
+                  <div class="slider-label-row">
+                    <span class="slider-name">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                      </svg>
+                      Saturasi
+                    </span>
+                    <span id="label-val-saturate" class="slider-val">100%</span>
+                  </div>
+                  <input id="edit-saturate" type="range" min="0" max="180" value="100" class="custom-range-slider" />
+                </div>
+              </div>
+            </div>
+
+            <div class="create-section-block">
+              <div class="form-field" id="create-location-field">
+                <label for="create-location-input">Lokasi (Opsional)</label>
+                <div class="input-with-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <input id="create-location-input" type="text" class="form-input" placeholder="Tambahkan lokasi (misal: Surabaya, Indonesia)" />
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="create-caption-input">Keterangan / Caption</label>
+                <textarea id="create-caption-input" rows="3" class="form-textarea" placeholder="Tulis caption untuk postingan ini..."></textarea>
+              </div>
+            </div>
+
+            <button type="submit" id="create-submit-btn" class="create-share-submit-btn">
+              <span id="create-submit-text">Bagikan Postingan</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="notifications-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Notifications">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>Notifications &amp; Riwayat Like</span>
+        <button id="notifications-modal-close" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body" style="space-y:16px;">
+        
+        <div style="margin-bottom:20px;">
+          <h3 style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            Aktivitas Masuk (Suka &amp; Pengikut Baru)
+          </h3>
+          <div id="incoming-notifications-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border-light); margin:16px 0;" />
+
+        <div>
+          <h3 style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Riwayat Interaksi yang Pernah Kamu Sukai
+          </h3>
+          <div id="my-liked-history-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="story-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Story Viewer">
+    <div class="story-viewer-box">
+      <img id="story-viewer-img" src="" alt="Story" class="story-viewer-img" draggable="false" />
+      <div class="story-top-overlay">
+        <div class="story-progress-track">
+          <div id="story-progress-bar" class="story-progress-bar"></div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img id="story-viewer-avatar" src="" alt="" style="width:34px; height:34px; border-radius:50%; object-fit:cover; border:2px solid #ffffff;" />
+            <div>
+              <strong id="story-viewer-username" style="font-size:14px; display:block;"></strong>
+              <span id="story-viewer-timeleft" style="font-size:11px; color:#e0e0e0;"></span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button id="story-delete-btn" type="button" class="hidden" style="font-size:12px; background:rgba(255,48,64,0.85); color:#fff; padding:4px 8px; border-radius:6px; font-weight:600;">Hapus</button>
+            <button id="story-close-btn" type="button" style="font-size:22px; line-height:1; padding:4px; color:#ffffff;" aria-label="Close">✕</button>
+          </div>
+        </div>
+      </div>
+      <div id="story-viewer-caption" class="story-bottom-caption"></div>
+    </div>
+  </div>
+
+  <div id="edit-profile-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Edit Profile">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>Edit profile</span>
+        <button id="edit-profile-close" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-profile-form">
+          <div class="form-field">
+            <label for="edit-prof-username">Username</label>
+            <input id="edit-prof-username" type="text" class="form-input" required />
+          </div>
+          <div class="form-field">
+            <label for="edit-prof-fullname">Nama Lengkap</label>
+            <input id="edit-prof-fullname" type="text" class="form-input" required />
+          </div>
+          <div class="form-field">
+            <label for="edit-prof-website">Website / Link Portofolio</label>
+            <input id="edit-prof-website" type="text" class="form-input" placeholder="Tambahkan website atau link portofolio..." />
+          </div>
+          <div class="form-field">
+            <label for="edit-prof-bio">Bio</label>
+            <textarea id="edit-prof-bio" rows="2" class="form-textarea" placeholder="Tulis bio profil..."></textarea>
+          </div>
+          <div class="form-field">
+            <label for="edit-prof-note">Status Note (Gelembung di atas foto profil)</label>
+            <input id="edit-prof-note" type="text" class="form-input" placeholder="Note..." />
+          </div>
+          <div class="form-field">
+            <label for="edit-prof-avatar-file">Ganti Foto Profil (Pilih File Gambar)</label>
+            <input id="edit-prof-avatar-file" type="file" accept="image/*" class="form-input" style="padding:6px;" />
+          </div>
+          <button type="submit" class="btn-primary">Simpan Perubahan</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="appearance-modal" class="appearance-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="appearance-modal-title">
+    <div class="appearance-sheet">
+      <div class="appearance-sheet-handle"></div>
+
+      <div class="appearance-sheet-header">
+        <h3 id="appearance-modal-title" class="appearance-sheet-title">Appearance</h3>
+        <button type="button" id="appearance-modal-close-btn" class="appearance-close-btn" aria-label="Tutup">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="appearance-options-list">
+        <button type="button" class="appearance-option-item theme-option-btn" data-theme-mode="dark">
+          <div class="appearance-option-left">
+            <div class="appearance-icon-wrap">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </div>
+            <span class="appearance-option-label">Dark</span>
+          </div>
+          <svg class="appearance-check-icon more-check-icon" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </button>
+
+        <button type="button" class="appearance-option-item theme-option-btn selected" data-theme-mode="light">
+          <div class="appearance-option-left">
+            <div class="appearance-icon-wrap">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="19.78" y1="4.22" x2="18.36" y2="5.64" />
+              </svg>
+            </div>
+            <span class="appearance-option-label">Light</span>
+          </div>
+          <svg class="appearance-check-icon more-check-icon" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </button>
+
+        <button type="button" class="appearance-option-item theme-option-btn" data-theme-mode="auto">
+          <div class="appearance-option-left">
+            <div class="appearance-icon-wrap">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </div>
+            <span class="appearance-option-label">Auto</span>
+          </div>
+          <svg class="appearance-check-icon more-check-icon" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="appearance-sheet-footer">
+        <button type="button" id="appearance-modal-done-btn" class="appearance-done-btn">Selesai</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="search-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Search Users">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>Search Users</span>
+        <button id="search-modal-close" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-field">
+          <input id="user-search-input" type="text" class="form-input" placeholder="Cari username atau nama lengkap..." />
+        </div>
+        <div id="search-results-container" style="display:flex; flex-direction:column; gap:12px; max-height:300px; overflow-y:auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="post-detail-modal" class="post-detail-overlay" role="dialog" aria-modal="true" aria-label="Post Comments">
+    <button type="button" id="post-detail-close-btn" class="post-detail-close-x" aria-label="Close">✕</button>
+
+    <div class="post-detail-dialog">
+      <div class="post-detail-media-col" id="post-detail-media-box">
+        <img id="post-detail-img" src="" alt="Post" />
+        <svg class="double-tap-heart" id="post-detail-dbl-heart" width="96" height="96" viewBox="0 0 24 24" fill="#ffffff">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+
+      <div class="post-detail-right-col">
+        <header class="post-detail-header">
+          <div class="post-detail-author-left" id="post-detail-author-link" style="cursor:pointer;">
+            <div class="author-avatar-ring">
+              <img id="post-detail-author-avatar" src="" alt="" />
+            </div>
+            <div class="post-detail-author-texts">
+              <span id="post-detail-author-username" class="post-detail-username"></span>
+              <span id="post-detail-author-sub" class="post-detail-subtitle"></span>
+            </div>
+          </div>
+          <div class="post-detail-header-right">
+            <span class="post-detail-dots">•••</span>
+          </div>
+        </header>
+
+        <div id="post-detail-comments-scroll" class="post-detail-comments-scroll"></div>
+
+        <div class="post-detail-footer-actions">
+          <div class="post-actions" style="padding:0 0 8px;">
+            <div class="post-actions-left">
+              <button type="button" id="pd-like-btn" class="action-btn like-btn" aria-label="Like">
+                <svg class="icon-heart-outline" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M16.79 3.5c-1.98 0-3.71 1.06-4.79 2.67C10.92 4.56 9.19 3.5 7.21 3.5 4.33 3.5 2 5.93 2 8.93c0 5.36 8.03 10.63 9.55 11.6a.84.84 0 0 0 .9 0C13.97 19.56 22 14.29 22 8.93c0-3-2.33-5.43-5.21-5.43Z" />
+                </svg>
+                <svg class="icon-heart-filled" fill="currentColor" viewBox="0 0 24 24" style="display:none;">
+                  <path d="M16.79 3.5c-1.98 0-3.71 1.06-4.79 2.67C10.92 4.56 9.19 3.5 7.21 3.5 4.33 3.5 2 5.93 2 8.93c0 5.36 8.03 10.63 9.55 11.6a.84.84 0 0 0 .9 0C13.97 19.56 22 14.29 22 8.93c0-3-2.33-5.43-5.21-5.43Z" />
+                </svg>
+              </button>
+              <button type="button" id="pd-comment-focus-btn" class="action-btn" aria-label="Comment">
+                <svg fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M20.66 16.96A9.5 9.5 0 1 0 17.3 20.3L21.5 21.5Z" />
+                </svg>
+              </button>
+              <button type="button" id="pd-repost-btn" class="action-btn repost-btn" aria-label="Repost">
+                <svg fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M19.5 9.5v-1a3 3 0 0 0-3-3H5.5" />
+                  <polyline points="8.5 2.5 5.5 5.5 8.5 8.5" />
+                  <path d="M4.5 14.5v1a3 3 0 0 0 3 3h11" />
+                  <polyline points="15.5 21.5 18.5 18.5 15.5 15.5" />
+                </svg>
+              </button>
+              <button type="button" id="pd-share-btn" class="action-btn" aria-label="Share">
+                <svg fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M22 3 9.22 10.08" />
+                  <path d="M11.7 20.33 22 3H2l7.22 7.08 2.48 10.25Z" />
+                </svg>
+              </button>
+            </div>
+            <button type="button" id="pd-save-btn" class="action-btn save-btn" aria-label="Save">
+              <svg class="icon-save-outline" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M20 21 12 13.44 4 21V3h16Z" />
+              </svg>
+              <svg class="icon-save-filled" fill="currentColor" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" viewBox="0 0 24 24" style="display:none;">
+                <path d="M20 21 12 13.44 4 21V3h16Z" />
+              </svg>
+            </button>
+          </div>
+          <div id="pd-likes-count-text" class="pd-likes-count-text">0 likes</div>
+          <div id="pd-post-time-text" class="pd-post-time-text">Just now</div>
+        </div>
+
+        <div id="pd-replying-banner" class="pd-replying-banner hidden">
+          <span id="pd-replying-label">Membalas @username</span>
+          <button type="button" id="pd-cancel-reply-btn" aria-label="Batal Reply">✕</button>
+        </div>
+
+        <form id="pd-comment-form" class="pd-comment-form">
+          <button type="button" id="pd-emoji-btn" class="pd-emoji-btn" aria-label="Emoji" title="Tambahkan Emoji">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <path stroke-linecap="round" d="M8 14s1.5 2 4 2 4-2 4-2" />
+              <line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2.5" stroke-linecap="round" />
+              <line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </button>
+          <input type="text" id="pd-comment-input" class="pd-comment-input" placeholder="Add a comment..." autocomplete="off" />
+          <button type="submit" id="pd-comment-submit" class="pd-comment-submit">Post</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>
