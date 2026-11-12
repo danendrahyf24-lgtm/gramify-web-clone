@@ -1995,27 +1995,19 @@ function renderFeedPosts() {
             <div class="author-name-row">
               <span class="author-username" data-profile-user="${escapeAttr(post.authorUsername)}" style="cursor:pointer;">${escapeHtml(post.authorUsername)}</span>
               <span class="post-time">• ${formatRelativeTime(post.createdAt)}</span>
-              ${
-                !isOwnPost
-                  ? `<button type="button" class="post-inline-follow-btn" data-author="${escapeAttr(post.authorUsername)}">• ${
-                      isFollowingAuthor ? 'Following' : 'Follow'
-                    }</button>`
-                  : ''
-              }
             </div>
-            ${post.location ? `<span class="post-location">${escapeHtml(post.location)}</span>` : ''}
+            ${post.location ? `<span class="post-location">${escapeHtml(post.location)}</span>` : (!isFollowingAuthor && !isOwnPost ? '<span class="post-location">Suggested for you</span>' : '')}
           </div>
         </div>
         <div class="post-header-right">
           ${
-            isOwnPost
-              ? `<button type="button" class="post-more-btn delete-own-post-btn" data-post-id="${escapeAttr(post.id)}" title="Hapus Postingan" aria-label="Options">
-                   <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.75"/><circle cx="6" cy="12" r="1.75"/><circle cx="18" cy="12" r="1.75"/></svg>
-                 </button>`
-              : `<button type="button" class="post-more-btn comment-trigger-btn" title="Opsi Postingan" aria-label="Options">
-                   <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.75"/><circle cx="6" cy="12" r="1.75"/><circle cx="18" cy="12" r="1.75"/></svg>
-                 </button>`
+            !isOwnPost && !isFollowingAuthor
+              ? `<button type="button" class="post-header-follow-btn" data-author="${escapeAttr(post.authorUsername)}">Follow</button>`
+              : ''
           }
+          <button type="button" class="post-more-btn post-options-btn" data-post-id="${escapeAttr(post.id)}" aria-label="More options" title="More options">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.75"/><circle cx="6" cy="12" r="1.75"/><circle cx="18" cy="12" r="1.75"/></svg>
+          </button>
         </div>
       </header>
 
@@ -2119,24 +2111,19 @@ function initPostFeedEvents() {
     }
 
     
-    const followInlineBtn = e.target.closest('.post-inline-follow-btn');
-    if (followInlineBtn) {
-      const targetUser = followInlineBtn.getAttribute('data-author');
+    const followHeaderBtn = e.target.closest('.post-header-follow-btn') || e.target.closest('.post-inline-follow-btn');
+    if (followHeaderBtn) {
+      const targetUser = followHeaderBtn.getAttribute('data-author');
       handleToggleFollow(targetUser);
       return;
     }
 
-    
-    const delBtn = e.target.closest('.delete-own-post-btn');
-    if (delBtn) {
-      const db = getDB();
-      db.posts = db.posts.filter((p) => p.id !== postId);
-      saveDB(db);
-      renderAllViews();
+    const optionsBtn = e.target.closest('.post-options-btn') || e.target.closest('.post-more-btn');
+    if (optionsBtn) {
+      openPostOptionsMenu(optionsBtn, postId);
       return;
     }
 
-    
     if (e.target.closest('.comment-trigger-btn')) {
       openPostDetailModal(postId);
       return;
@@ -2178,6 +2165,245 @@ function initPostFeedEvents() {
   });
 }
 
+let activePostOptionsPopover = null;
+let activePostOptionsBackdrop = null;
+
+function closePostOptionsMenu() {
+  if (activePostOptionsPopover && activePostOptionsPopover.parentNode) {
+    activePostOptionsPopover.parentNode.removeChild(activePostOptionsPopover);
+  }
+  if (activePostOptionsBackdrop && activePostOptionsBackdrop.parentNode) {
+    activePostOptionsBackdrop.parentNode.removeChild(activePostOptionsBackdrop);
+  }
+  activePostOptionsPopover = null;
+  activePostOptionsBackdrop = null;
+}
+
+function openPostOptionsMenu(anchorEl, postId) {
+  closePostOptionsMenu();
+  if (!postId) return;
+  const db = getDB();
+  const post = db.posts.find((p) => p.id === postId);
+  if (!post) return;
+
+  const currentUser = getCurrentUser();
+  const isOwnPost = currentUser && post.authorUsername === currentUser.username;
+
+  const backdrop = document.createElement('div');
+  backdrop.className = 'post-options-popover-backdrop';
+  backdrop.addEventListener('click', closePostOptionsMenu);
+
+  const popover = document.createElement('div');
+  popover.className = 'post-options-popover';
+
+  let itemsHtml = '';
+  if (isOwnPost) {
+    itemsHtml = `
+      <button type="button" class="post-options-item danger" data-action="delete">Delete</button>
+      <button type="button" class="post-options-item" data-action="about">About this account</button>
+      <button type="button" class="post-options-item" data-action="goto">Go to post</button>
+      <button type="button" class="post-options-item" data-action="share">Share to...</button>
+      <button type="button" class="post-options-item" data-action="copy">Copy link</button>
+      <button type="button" class="post-options-item" data-action="embed">Embed</button>
+      <button type="button" class="post-options-item cancel-btn" data-action="cancel">Cancel</button>
+    `;
+  } else {
+    itemsHtml = `
+      <button type="button" class="post-options-item danger" data-action="report">Report</button>
+      <button type="button" class="post-options-item" data-action="about">About this account</button>
+      <button type="button" class="post-options-item" data-action="goto">Go to post</button>
+      <button type="button" class="post-options-item" data-action="share">Share to...</button>
+      <button type="button" class="post-options-item" data-action="copy">Copy link</button>
+      <button type="button" class="post-options-item" data-action="embed">Embed</button>
+      <button type="button" class="post-options-item cancel-btn" data-action="cancel">Cancel</button>
+    `;
+  }
+
+  popover.innerHTML = itemsHtml;
+
+  popover.addEventListener('click', (e) => {
+    const item = e.target.closest('.post-options-item');
+    if (!item) return;
+    const action = item.getAttribute('data-action');
+    closePostOptionsMenu();
+
+    const postUrl = window.location.origin + window.location.pathname + '?post=' + encodeURIComponent(post.id);
+
+    if (action === 'report') {
+      showExitToast('Postingan telah dilaporkan. Terima kasih atas masukan Anda.');
+      return;
+    }
+    if (action === 'about') {
+      openAboutAccountModal(post.authorUsername);
+      return;
+    }
+    if (action === 'goto') {
+      openPostDetailModal(post.id);
+      return;
+    }
+    if (action === 'share') {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Gramify',
+          text: `Lihat postingan @${post.authorUsername} di Gramify`,
+          url: postUrl
+        }).catch(() => {
+          openSharePostModal(post.id);
+        });
+      } else {
+        openSharePostModal(post.id);
+      }
+      return;
+    }
+    if (action === 'copy') {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(postUrl).then(() => {
+          showExitToast('Tautan disalin ke clipboard');
+        }).catch(() => {
+          showExitToast('Tautan disalin ke clipboard');
+        });
+      } else {
+        const dummyInput = document.createElement('input');
+        dummyInput.value = postUrl;
+        document.body.appendChild(dummyInput);
+        dummyInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummyInput);
+        showExitToast('Tautan disalin ke clipboard');
+      }
+      return;
+    }
+    if (action === 'embed') {
+      const embedCode = `<blockquote class="gramify-media" data-gramify-permalink="${postUrl}">Lihat postingan @${post.authorUsername} di Gramify</blockquote>`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(embedCode).then(() => {
+          showExitToast('Kode sematan disalin ke clipboard');
+        }).catch(() => {
+          showExitToast('Kode sematan disalin ke clipboard');
+        });
+      } else {
+        const dummyInput = document.createElement('textarea');
+        dummyInput.value = embedCode;
+        document.body.appendChild(dummyInput);
+        dummyInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummyInput);
+        showExitToast('Kode sematan disalin ke clipboard');
+      }
+      return;
+    }
+    if (action === 'delete') {
+      if (confirm('Hapus postingan ini?')) {
+        const currentDB = getDB();
+        currentDB.posts = currentDB.posts.filter((p) => p.id !== post.id);
+        saveDB(currentDB);
+        renderAllViews();
+        showExitToast('Postingan telah dihapus');
+      }
+      return;
+    }
+  });
+
+  document.body.appendChild(backdrop);
+  document.body.appendChild(popover);
+
+  const rect = anchorEl.getBoundingClientRect();
+  const popoverWidth = 250;
+  let top = rect.bottom + 6;
+  let left = rect.right - popoverWidth;
+
+  if (left < 10) left = 10;
+  if (left + popoverWidth > window.innerWidth - 10) left = window.innerWidth - popoverWidth - 10;
+  if (top + 280 > window.innerHeight) {
+    top = Math.max(10, rect.top - 280);
+  }
+
+  popover.style.top = top + 'px';
+  popover.style.left = left + 'px';
+
+  activePostOptionsPopover = popover;
+  activePostOptionsBackdrop = backdrop;
+}
+
+function openAboutAccountModal(username) {
+  const existingBackdrop = document.getElementById('about-account-backdrop');
+  if (existingBackdrop) existingBackdrop.remove();
+
+  const db = getDB();
+  const targetUser = db.users.find((u) => u.username === username);
+  const avatarSrc = targetUser ? targetUser.avatar : DEFAULT_AVATAR;
+  const fullName = targetUser ? targetUser.fullName : username;
+
+  const backdrop = document.createElement('div');
+  backdrop.id = 'about-account-backdrop';
+  backdrop.className = 'about-account-modal-backdrop';
+
+  backdrop.innerHTML = `
+    <div class="about-account-modal" role="dialog" aria-modal="true">
+      <header class="about-account-header">
+        <span>About this account</span>
+        <button type="button" class="about-account-close-btn" aria-label="Close">✕</button>
+      </header>
+      <div class="about-account-body">
+        <img src="${escapeAttr(avatarSrc)}" alt="${escapeAttr(username)}" class="about-account-avatar" />
+        <div class="about-account-username">${escapeHtml(username)}</div>
+        <div class="about-account-fullname">${escapeHtml(fullName)}</div>
+        <div class="about-account-info-list">
+          <div class="about-account-info-item">
+            <svg class="about-account-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <div class="about-account-info-texts">
+              <span class="about-account-info-title">Date joined</span>
+              <span class="about-account-info-desc">November 2026</span>
+            </div>
+          </div>
+          <div class="about-account-info-item">
+            <svg class="about-account-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M2 12h20"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <div class="about-account-info-texts">
+              <span class="about-account-info-title">Account based in</span>
+              <span class="about-account-info-desc">Indonesia</span>
+            </div>
+          </div>
+          <div class="about-account-info-item">
+            <svg class="about-account-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 14 14"/>
+            </svg>
+            <div class="about-account-info-texts">
+              <span class="about-account-info-title">Former usernames</span>
+              <span class="about-account-info-desc">0</span>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="about-account-view-profile-btn" data-author="${escapeAttr(username)}">Lihat Profil</button>
+      </div>
+    </div>
+  `;
+
+  backdrop.addEventListener('click', (e) => {
+    if (e.target === backdrop || e.target.closest('.about-account-close-btn')) {
+      backdrop.remove();
+      return;
+    }
+    const viewProfileBtn = e.target.closest('.about-account-view-profile-btn');
+    if (viewProfileBtn) {
+      const u = viewProfileBtn.getAttribute('data-author');
+      backdrop.remove();
+      openUserProfile(u);
+      return;
+    }
+  });
+
+  document.body.appendChild(backdrop);
+}
 
 let activeDetailPostId = null;
 let activeReplyTarget = null; 
@@ -2204,6 +2430,15 @@ function initPostDetailModal() {
 
   if (closeBtn) {
     closeBtn.addEventListener('click', closePostDetailModal);
+  }
+  const pdDots = modal.querySelector('.post-detail-dots');
+  if (pdDots) {
+    pdDots.style.cursor = 'pointer';
+    pdDots.addEventListener('click', (e) => {
+      if (activeDetailPostId) {
+        openPostOptionsMenu(e.currentTarget, activeDetailPostId);
+      }
+    });
   }
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closePostDetailModal();
