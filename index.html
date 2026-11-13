@@ -839,28 +839,80 @@
     </div>
   </div>
 
-  <div id="story-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Story Viewer">
-    <div class="story-viewer-box">
-      <img id="story-viewer-img" src="" alt="Story" class="story-viewer-img" draggable="false" />
-      <div class="story-top-overlay">
-        <div class="story-progress-track">
-          <div id="story-progress-bar" class="story-progress-bar"></div>
-        </div>
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <img id="story-viewer-avatar" src="" alt="" style="width:34px; height:34px; border-radius:50%; object-fit:cover; border:2px solid #ffffff;" />
-            <div>
-              <strong id="story-viewer-username" style="font-size:14px; display:block;"></strong>
-              <span id="story-viewer-timeleft" style="font-size:11px; color:#e0e0e0;"></span>
+  <div id="story-modal" class="modal-overlay story-modal-overlay" role="dialog" aria-modal="true" aria-label="Story Viewer">
+    <div class="story-desktop-topbar">
+      <button id="story-desktop-brand" type="button" class="story-desktop-brand" aria-label="Gramify">Gramify</button>
+      <button id="story-desktop-close-btn" type="button" class="story-desktop-close-btn" aria-label="Close">✕</button>
+    </div>
+
+    <div class="story-carousel-stage">
+      <div id="story-side-left" class="story-side-slot story-side-left"></div>
+
+      <button id="story-prev-arrow-btn" type="button" class="story-nav-arrow story-nav-prev hidden" aria-label="Previous story">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <div class="story-viewer-box">
+        <div class="story-media-wrap">
+          <img id="story-viewer-bg-img" src="" alt="" class="story-viewer-bg-blur" aria-hidden="true" draggable="false" />
+          <img id="story-viewer-img" src="" alt="Story" class="story-viewer-img" draggable="false" />
+
+          <div class="story-tap-zone story-tap-prev" aria-label="Previous"></div>
+          <div class="story-tap-zone story-tap-next" aria-label="Next"></div>
+
+          <div class="story-top-overlay">
+            <div id="story-progress-segments" class="story-progress-segments"></div>
+            <div class="story-header-row">
+              <div id="story-author-link" class="story-header-author">
+                <img id="story-viewer-avatar" src="" alt="" class="story-header-avatar" />
+                <div class="story-header-meta">
+                  <div class="story-header-name-line">
+                    <strong id="story-viewer-username" class="story-header-username"></strong>
+                    <span id="story-viewer-timeleft" class="story-header-time"></span>
+                  </div>
+                  <span id="story-viewer-subtitle" class="story-header-subtitle"></span>
+                </div>
+              </div>
+              <div class="story-header-actions">
+                <button id="story-pause-btn" type="button" class="story-icon-btn" aria-label="Pause" title="Pause">
+                  <svg id="story-icon-pause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                  <svg id="story-icon-play" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                </button>
+                <button id="story-more-btn" type="button" class="story-icon-btn" aria-label="Options" title="Options">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+                </button>
+                <button id="story-delete-btn" type="button" class="story-delete-pill hidden">Hapus</button>
+                <button id="story-close-btn" type="button" class="story-mobile-close-btn" aria-label="Close">✕</button>
+              </div>
             </div>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <button id="story-delete-btn" type="button" class="hidden" style="font-size:12px; background:rgba(255,48,64,0.85); color:#fff; padding:4px 8px; border-radius:6px; font-weight:600;">Hapus</button>
-            <button id="story-close-btn" type="button" style="font-size:22px; line-height:1; padding:4px; color:#ffffff;" aria-label="Close">✕</button>
-          </div>
+
+          <div id="story-viewer-caption" class="story-bottom-caption"></div>
         </div>
+
+        <form id="story-reply-form" class="story-bottom-bar">
+          <div id="story-reply-input-wrap" class="story-reply-input-wrap">
+            <input id="story-reply-input" type="text" class="story-reply-input" placeholder="Send message" autocomplete="off" />
+            <button id="story-reply-send-btn" type="submit" class="story-reply-send-btn hidden">Kirim</button>
+          </div>
+          <div id="story-own-views-info" class="story-own-views-info hidden"></div>
+          <div class="story-bottom-actions">
+            <button id="story-like-btn" type="button" class="story-bottom-action-btn" aria-label="Like story">
+              <svg class="story-heart-outline" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M16.79 3.5c-1.98 0-3.71 1.06-4.79 2.67C10.92 4.56 9.19 3.5 7.21 3.5 4.33 3.5 2 5.93 2 8.93c0 5.36 8.03 10.63 9.55 11.6a.84.84 0 0 0 .9 0C13.97 19.56 22 14.29 22 8.93c0-3-2.33-5.43-5.21-5.43Z"/></svg>
+              <svg class="story-heart-filled hidden" width="24" height="24" viewBox="0 0 24 24" fill="#ff3040"><path d="M16.79 3.5c-1.98 0-3.71 1.06-4.79 2.67C10.92 4.56 9.19 3.5 7.21 3.5 4.33 3.5 2 5.93 2 8.93c0 5.36 8.03 10.63 9.55 11.6a.84.84 0 0 0 .9 0C13.97 19.56 22 14.29 22 8.93c0-3-2.33-5.43-5.21-5.43Z"/></svg>
+            </button>
+            <button id="story-share-btn" type="button" class="story-bottom-action-btn" aria-label="Share story">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 3 9.22 10.08"/><path d="M11.7 20.33 22 3H2l7.22 7.08 2.48 10.25Z"/></svg>
+            </button>
+          </div>
+        </form>
       </div>
-      <div id="story-viewer-caption" class="story-bottom-caption"></div>
+
+      <button id="story-next-arrow-btn" type="button" class="story-nav-arrow story-nav-next hidden" aria-label="Next story">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <div id="story-side-right" class="story-side-slot story-side-right"></div>
     </div>
   </div>
 
